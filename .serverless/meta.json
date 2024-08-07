@@ -1,0 +1,21 @@
+{
+  "unknown": {
+    "versionSfCore": null,
+    "versionFramework": "4.1.19",
+    "isWithinCompose": false,
+    "composeOrgName": null,
+    "composeServiceName": null,
+    "command": [],
+    "options": {},
+    "error": {
+      "message": "app-name may contain only numbers, uppercase letters, lowercase letters, dashes, and underscores. - Please contact support and provide this identifier to reference this issue - M029RVM6Z5RD",
+      "stack": "Error: app-name may contain only numbers, uppercase letters, lowercase letters, dashes, and underscores. - Please contact support and provide this identifier to reference this issue - M029RVM6Z5RD\n    at _AppsClient.makeRequest (file:///C:/Users/Salus%20X%20Labs/.serverless/releases/4.1.19/package/dist/sf-core.js:179:422328)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async _AppsClient._post (file:///C:/Users/Salus%20X%20Labs/.serverless/releases/4.1.19/package/dist/sf-core.js:179:421502)\n    at async _AppsClient.create (file:///C:/Users/Salus%20X%20Labs/.serverless/releases/4.1.19/package/dist/sf-core.js:179:428134)\n    at async ensureAppInConfigFile (file:///C:/Users/Salus%20X%20Labs/.serverless/releases/4.1.19/package/dist/sf-core.js:888:690)\n    at async setOrgAndApp (file:///C:/Users/Salus%20X%20Labs/.serverless/releases/4.1.19/package/dist/sf-core.js:882:6284)\n    at async routeNew (file:///C:/Users/Salus%20X%20Labs/.serverless/releases/4.1.19/package/dist/sf-core.js:882:220)\n    at async commandOnboarding (file:///C:/Users/Salus%20X%20Labs/.serverless/releases/4.1.19/package/dist/sf-core.js:880:5024)\n    at async catchAllHandler (file:///C:/Users/Salus%20X%20Labs/.serverless/releases/4.1.19/package/dist/sf-core.js:905:19748)\n    at async runCommand (file:///C:/Users/Salus%20X%20Labs/.serverless/releases/4.1.19/package/dist/sf-core.js:909:4100)"
+    },
+    "machineId": "8fddac231ab5d5ef8cf63c8fd04b6339",
+    "serviceProviderAwsCfStackId": null,
+    "serviceProviderAwsCfStackCreated": null,
+    "serviceProviderAwsCfStackUpdated": null,
+    "serviceProviderAwsCfStackStatus": null,
+    "serviceProviderAwsCfStackOutputs": null
+  }
+}

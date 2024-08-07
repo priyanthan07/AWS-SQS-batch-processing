@@ -1,0 +1,66 @@
+
+service: ContentCreation
+
+frameworkVersion: '4'
+
+provider:
+  name: aws
+  runtime: python3.12
+  region: us-east-1
+  environment:
+    OPENAI_API_KEY: ${env:OPENAI_API_KEY}
+    BUCKET_NAME : ${env:BUCKET_NAME}
+
+iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - sqs:ReceiveMessage
+            - sqs:DeleteMessage
+            - sqs:GetQueueAttributes
+            - sqs:SendMessage
+          Resource:
+            - Fn::GetAtt:
+                - ContentCreatorQueue
+                - Arn
+            - Fn::GetAtt:
+                - ContentCreatorDLQ
+                - Arn
+      
+functions:
+  evaluate:
+    handler: handler.generate
+    reservedConcurrency: 10
+    provisionedConcurrency: 5
+    timeout: 900
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - ContentCreatorQueue
+              - Arn
+          batchSize: 10
+          enabled: true
+          
+    layers:
+      -  ContentCreationLayer # add the new layer
+
+resources:
+  Resources:
+    ContentCreatorQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: "ContentCreatorQueue"
+        VisibilityTimeout: 900
+        RedrivePolicy:
+          deadLetterTargetArn:
+            Fn::GetAtt:
+              - ContentCreatorQueueDLQ
+              - Arn
+          maxReceiveCount: 2
+
+    TranscriptionDLQ:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: "ContentCreatorQueue"
