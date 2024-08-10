@@ -2,7 +2,10 @@ import json
 import os
 import boto3
 import openai
+from dotenv import load_dotenv
 from openai import OpenAI
+
+load_dotenv()
 
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
@@ -13,19 +16,25 @@ bucket_name = os.getenv('BUCKET_NAME')
 def generate(event, context):
     
     try:  
-        for record in event['records']:
+        for record in event['Records']:
             body = json.loads(record['body'])
+            
+            # body = record['body']
+            
+            session_id = body['session_id']
             topic = body['topic']
+            
+            print(f"session_id : {session_id}, topic : {topic}")
             
             prompt = f"""
                 can you write a blog on this topic {topic}. Youe blog should be in this structure.
-                1. Title
+                1. Title of the blog
                 2. introduction
                 3. Body content
                 4. conclusion
                 5. references
                 
-                Include various required details in the blog. Don't generate out of the topic.                 
+                Include various required details in the blog and explain detailly. Don't generate anything out of the topic.                 
             
             """
             
@@ -40,7 +49,7 @@ def generate(event, context):
             blog_content = response.choices[0].message.content
             
             # Save the blog content to a text file in S3
-            file_name = f"blog_{topic.replace(' ', '_')}.txt"
+            file_name = f"blog_{session_id}.txt"
             s3.put_object(Bucket=bucket_name, Key=file_name, Body=blog_content)
 
 

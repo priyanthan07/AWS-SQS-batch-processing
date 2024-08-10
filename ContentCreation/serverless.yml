@@ -1,17 +1,16 @@
 
+# "service" is the name of this project. This will also be added to your AWS resource names.
 service: ContentCreation
-
-frameworkVersion: '4'
 
 provider:
   name: aws
-  runtime: python3.12
+  runtime: python3.10
   region: us-east-1
   environment:
     OPENAI_API_KEY: ${env:OPENAI_API_KEY}
     BUCKET_NAME : ${env:BUCKET_NAME}
 
-iam:
+  iam:
     role:
       statements:
         - Effect: Allow
@@ -27,12 +26,22 @@ iam:
             - Fn::GetAtt:
                 - ContentCreatorDLQ
                 - Arn
-      
+
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+            - s3:GetObject
+            - s3:DeleteObject
+            - s3:ListBucket
+          Resource:
+            - arn:aws:s3:::${env:BUCKET_NAME}/*
+            - arn:aws:s3:::${env:BUCKET_NAME}
+
 functions:
-  evaluate:
+  generate:
     handler: handler.generate
     reservedConcurrency: 10
-    provisionedConcurrency: 5
+    provisionedConcurrency: 3
     timeout: 900
     events:
       - sqs:
@@ -44,7 +53,8 @@ functions:
           enabled: true
           
     layers:
-      -  ContentCreationLayer # add the new layer
+      - arn:aws:lambda:us-east-1:512195023911:layer:content-layer:2
+
 
 resources:
   Resources:
@@ -56,11 +66,11 @@ resources:
         RedrivePolicy:
           deadLetterTargetArn:
             Fn::GetAtt:
-              - ContentCreatorQueueDLQ
+              - ContentCreatorDLQ
               - Arn
           maxReceiveCount: 2
 
-    TranscriptionDLQ:
+    ContentCreatorDLQ:
       Type: "AWS::SQS::Queue"
       Properties:
-        QueueName: "ContentCreatorQueue"
+        QueueName: "ContentCreatorDLQ"
